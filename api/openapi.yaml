@@ -1,0 +1,125 @@
+openapi: 3.1.0
+
+info:
+  title: Student Management API
+  version: 0.0.1
+  description: API for managing student records in a school system.
+
+components:
+  schemas:
+    Student:
+      type: object
+      properties:
+        id:
+          type: integer
+          description: Unique identifier for the student
+        name:
+          type: string
+          description: Name of the student
+        age:
+          type: integer
+          description: Age of the student
+        tel:
+          type: string
+          description: Telephone number of the student
+        major:
+          type: string
+          description: Major field of study of the student
+    StudentInput:
+      type: object
+      properties:
+        name:
+          type: string
+          description: Name of the student
+        age:
+          type: integer
+          description: Age of the student
+        tel:
+          type: string
+          description: Telephone number of the student
+        major:
+          type: string
+          description: Major field of study of the student
+      required:
+        - name
+        - age
+        - tel
+        - major
+
+paths:
+  /students:
+    get:
+      summary: Retrieve all students information
+      responses:
+        "200":
+          description: A list of students.
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/Student"
+    post:
+      summary: Add a new student
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/StudentInput"
+      responses:
+        "201":
+          description: Student created successfully.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Student"
+
+  /students/{id}:
+    get:
+      summary: Retrieve a specific student's information based on ID
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        "200":
+          description: A single student's information.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Student"
+    put:
+      summary: Update a specific student's information based on ID
+      parameters:
+        - name: id
+          required: true
+          in: path
+          schema:
+            type: integer
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/StudentInput"
+      responses:
+        "200":
+          description: Student information updated successfully.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Student"
+    delete:
+      summary: Delete a specific student's information based on ID
+      parameters:
+        - name: id
+          required: true
+          in: path
+          schema:
+            type: integer
+      responses:
+        "204":
+          description: Student information delete successfully.
