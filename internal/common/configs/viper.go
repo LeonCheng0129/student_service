@@ -9,6 +9,12 @@ import (
 
 var once sync.Once
 
+func init() {
+	if err := NewViperConfig(); err != nil {
+		panic(err)
+	}
+}
+
 func NewViperConfig() (err error) {
 	once.Do(func() {
 		err = newViperConfig()
@@ -20,8 +26,7 @@ func newViperConfig() error {
 	viper.SetConfigName("config")
 	viper.SetConfigType("yaml")
 
-	viper.AddConfigPath(".")
-	viper.AddConfigPath("./configs")
+	viper.AddConfigPath("./internal/common/configs")
 
 	viper.EnvKeyReplacer(strings.NewReplacer(".", "_")) // 允许用 MYSQL_USER 覆盖 mysql.user
 	viper.AutomaticEnv()

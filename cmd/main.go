@@ -1,23 +1,22 @@
 package main
 
 import (
-	"github.com/LeonCheng0129/student_service/configs"
 	"github.com/LeonCheng0129/student_service/internal/adapters/repository"
 	"github.com/LeonCheng0129/student_service/internal/adapters/server"
+	_ "github.com/LeonCheng0129/student_service/internal/common/configs"
 	"github.com/gin-gonic/gin"
 	"github.com/spf13/viper"
 	"log"
 )
 
 func main() {
-	// load configuration
-	if err := configs.NewViperConfig(); err != nil {
-		log.Fatalf("Error loading configuration: %v\n", err)
-	}
-
 	log.Printf("Initializing repository...\n")
 	// 更改repo实例替换数据库具体实现
-	repo := repository.NewMockRepository()
+	//repo := repository.NewMockRepository()
+	repo, err := repository.NewMySQLRepository()
+	if err != nil {
+		log.Fatalf("Failed to initialize repository: %v\n", err)
+	}
 
 	// init server server, inject repo into handlers
 	log.Printf("Starting HTTP server...\n")

@@ -22,7 +22,7 @@ func NewCreateStudentHandler(repo domain.Repository) *CreateStudentHandler {
 
 func (h *CreateStudentHandler) Handle(ctx context.Context, cmd CreateStudentCommand) (*domain.Student, error) {
 	return h.repo.Create(ctx, &domain.Student{
-		ID:    -1, // ID will be set by the repository
+		ID:    0, // ID will be set by the repository
 		Name:  cmd.Name,
 		Age:   cmd.Age,
 		Tel:   cmd.Tel,
