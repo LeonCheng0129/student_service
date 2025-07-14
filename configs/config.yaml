@@ -1,0 +1,22 @@
+http:
+  addr: localhost:3456
+
+jaeger:
+  url: "http://127.0.0.1:14268/api/traces"
+
+mysql:
+  user: leon
+  password: "${LEON_MYSQL_PASSWORD}"
+  host: localhost
+  port: 3307
+  dbname: "university_management"
+
+#redis:
+#  local:
+#    ip: 127.0.0.1
+#    port: 6379
+#    pool_size: 100
+#    max_conn: 100
+#    conn_timeout: 1000
+#    read_timeout: 1000
+#    write_timeout: 100

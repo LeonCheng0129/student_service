@@ -1,4 +1,4 @@
-package http
+package server
 
 import (
 	"github.com/LeonCheng0129/student_service/internal/app/command"
@@ -43,7 +43,7 @@ func (s *Server) GetStudents(c *gin.Context) {
 		return
 	}
 
-	// convert students to http.Student
+	// convert students to server.Student
 	httpStudents := make([]Student, len(students))
 	for _, student := range students {
 		httpStudents = append(httpStudents, toHTTPStudent(student))
