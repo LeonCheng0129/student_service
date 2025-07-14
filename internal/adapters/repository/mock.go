@@ -6,20 +6,26 @@ import (
 )
 
 type MockRepository struct {
-	repo []*domain.Student
+	repo map[int]*domain.Student
 }
 
 func (m *MockRepository) Get(ctx context.Context, id int) (*domain.Student, error) {
-	for _, student := range m.repo {
-		if student.ID == id {
-			return student, nil
-		}
+	student, exits := m.repo[id]
+	if !exits {
+		return nil, &domain.NotFoundError{ID: id}
 	}
-	return nil, &domain.NotFoundError{ID: id}
+	return student, nil
 }
 
 func (m *MockRepository) GetAll(ctx context.Context) ([]*domain.Student, error) {
-	return m.repo, nil
+	var students []*domain.Student
+	for _, student := range m.repo {
+		students = append(students, student)
+	}
+	if len(students) == 0 {
+		return nil, &domain.NotFoundError{ID: 0} // No students found
+	}
+	return students, nil
 }
 
 func (m *MockRepository) Create(ctx context.Context, student *domain.Student) (*domain.Student, error) {
@@ -28,39 +34,35 @@ func (m *MockRepository) Create(ctx context.Context, student *domain.Student) (*
 			return nil, &domain.AlreadyExistsError{ID: student.ID}
 		}
 	}
-	m.repo = append(m.repo, student)
+	m.repo[student.ID] = student
 	return student, nil
 }
 
 func (m *MockRepository) Update(ctx context.Context, id int, student *domain.Student) (*domain.Student, error) {
-	for _, existingStudent := range m.repo {
-		if existingStudent.ID == id {
-			existingStudent.Name = student.Name
-			existingStudent.Age = student.Age
-			existingStudent.Tel = student.Tel
-			existingStudent.Major = student.Major
-			return existingStudent, nil
-		}
+	if _, exists := m.repo[id]; !exists {
+		return nil, &domain.NotFoundError{ID: id}
 	}
-	return nil, &domain.NotFoundError{ID: id}
+	// Update the student details
+	m.repo[id] = student
+	return student, nil
 }
 
 func (m *MockRepository) Delete(ctx context.Context, id int) error {
-	for i, student := range m.repo {
-		if student.ID == id {
-			m.repo = append(m.repo[:i], m.repo[i+1:]...)
-			return nil
-		}
+	if _, exists := m.repo[id]; !exists {
+		return &domain.NotFoundError{ID: id}
 	}
-	return &domain.NotFoundError{ID: id}
+	delete(m.repo, id)
+	return nil
 }
 
 func NewMockRepository() *MockRepository {
 	return &MockRepository{
-		repo: []*domain.Student{
-			{ID: 1, Name: "John Doe", Age: 20, Tel: "123-456-7890", Major: "Computer Science"},
-			{ID: 2, Name: "Jane Smith", Age: 22, Tel: "987-654-3210", Major: "Mathematics"},
-			{ID: 3, Name: "Alice Johnson", Age: 21, Tel: "555-555-5555", Major: "Physics"},
+		repo: map[int]*domain.Student{
+			1: {ID: 1, Name: "Alice", Age: 20, Tel: "1234567890", Major: "Computer Science"},
+			2: {ID: 2, Name: "Bob", Age: 22, Tel: "0987654321", Major: "Mathematics"},
+			3: {ID: 3, Name: "Charlie", Age: 21, Tel: "1122334455", Major: "Physics"},
+			4: {ID: 4, Name: "David", Age: 23, Tel: "5566778899", Major: "Chemistry"},
+			5: {ID: 5, Name: "Eve", Age: 19, Tel: "6677889900", Major: "Biology"},
 		},
 	}
 }
