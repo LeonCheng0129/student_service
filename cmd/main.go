@@ -11,8 +11,7 @@ import (
 
 func main() {
 	// load configuration
-	err := configs.NewViperConfig()
-	if err != nil {
+	if err := configs.NewViperConfig(); err != nil {
 		log.Fatalf("Error loading configuration: %v\n", err)
 	}
 
@@ -29,16 +28,19 @@ func main() {
 
 	// register routes
 	log.Printf("Registering routes...\n")
-	server.RegisterHandlers(router, httpServer)
-
-	// start server
-	addr := viper.Sub("server").GetString("addr")
-	server.RunHTTPServer(addr, func(router *gin.Engine) {
-		server.RegisterHandlersWithOptions(router, httpServer,
-			server.GinServerOptions{
-				BaseURL:      "/api",
-				Middlewares:  nil,
-				ErrorHandler: nil,
-			})
+	server.RegisterHandlersWithOptions(router, httpServer, server.GinServerOptions{
+		BaseURL:      "/api",
+		Middlewares:  nil,
+		ErrorHandler: nil,
 	})
+
+	// run server
+	addr := viper.GetString("http.addr")
+	if addr == "" {
+		log.Fatal("HTTP server address is not configured")
+	}
+	log.Printf("Running HTTP server on %s...\n", addr)
+	if err := router.Run(addr); err != nil {
+		log.Fatalf("Failed to run HTTP server: %v\n", err)
+	}
 }

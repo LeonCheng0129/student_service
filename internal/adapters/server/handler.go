@@ -44,7 +44,7 @@ func (s *Server) GetStudents(c *gin.Context) {
 	}
 
 	// convert students to server.Student
-	httpStudents := make([]Student, len(students))
+	httpStudents := make([]Student, 0, len(students))
 	for _, student := range students {
 		httpStudents = append(httpStudents, toHTTPStudent(student))
 	}

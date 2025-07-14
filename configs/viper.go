@@ -1,10 +1,6 @@
 package configs
 
 import (
-	"fmt"
-	"os"
-	"path/filepath"
-	"runtime"
 	"strings"
 	"sync"
 
@@ -21,26 +17,14 @@ func NewViperConfig() (err error) {
 }
 
 func newViperConfig() error {
-	relPath, err := getRelativePathFromCaller()
-	if err != nil {
-		return err
-	}
 	viper.SetConfigName("config")
 	viper.SetConfigType("yaml")
-	viper.AddConfigPath(relPath)
-	viper.EnvKeyReplacer(strings.NewReplacer("_", "-"))
-	viper.AutomaticEnv()
-	//_ = viper.BindEnv("stripe-key", "STRIPE_KEY", "endpoint-stripe-secret", "ENDPOINT_STRIPE_SECRET")
-	return viper.ReadInConfig()
-}
 
-func getRelativePathFromCaller() (relPath string, err error) {
-	callerPwd, err := os.Getwd()
-	if err != nil {
-		return
-	}
-	_, here, _, _ := runtime.Caller(0)
-	relPath, err = filepath.Rel(callerPwd, filepath.Dir(here))
-	fmt.Printf("caller from: %s, here: %s, relpath: %s", callerPwd, here, relPath)
-	return
+	viper.AddConfigPath(".")
+	viper.AddConfigPath("./configs")
+
+	viper.EnvKeyReplacer(strings.NewReplacer(".", "_")) // 允许用 MYSQL_USER 覆盖 mysql.user
+	viper.AutomaticEnv()
+
+	return viper.ReadInConfig()
 }
