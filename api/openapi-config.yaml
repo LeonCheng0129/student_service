@@ -1,0 +1,6 @@
+package: http
+generate:
+  models: true
+  gin-server: true
+  client: false
+output: internal/adapters/http/openapi_gen.go
