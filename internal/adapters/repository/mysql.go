@@ -6,7 +6,6 @@ import (
 	_ "github.com/LeonCheng0129/student_service/internal/common/configs"
 	"github.com/LeonCheng0129/student_service/internal/domain"
 	"github.com/spf13/viper"
-	"log"
 	"time"
 
 	"gorm.io/driver/mysql"
@@ -132,12 +131,22 @@ func NewMySQLRepository() (*MySQLRepository, error) {
 	dsn := fmt.Sprintf("%s:%s@tcp(%s:%s)/%s?charset=utf8mb4&parseTime=True&loc=Local",
 		user, password, host, port, dbname)
 
-	log.Printf("!!! CRITICAL DEBUG: Attempting to connect with DSN: %s", dsn)
+	//log.Printf("DEBUG: Attempting to connect with DSN: %s", dsn)
 
 	db, err := gorm.Open(mysql.Open(dsn), &gorm.Config{})
 	if err != nil {
 		return nil, err
 	}
+
+	// set connection pool settings
+	sqlDB, err := db.DB()
+	if err != nil {
+		return nil, err
+	}
+	sqlDB.SetConnMaxLifetime(viper.GetDuration("mysql.max_conn_lifetime"))
+	sqlDB.SetConnMaxIdleTime(viper.GetDuration("mysql.max_idle_time"))
+	sqlDB.SetMaxIdleConns(viper.GetInt("mysql.max_idle_conn"))
+	sqlDB.SetMaxOpenConns(viper.GetInt("mysql.max_conn"))
 
 	return &MySQLRepository{db: db}, nil
 }

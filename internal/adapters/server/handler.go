@@ -5,6 +5,7 @@ import (
 	"github.com/LeonCheng0129/student_service/internal/app/query"
 	"github.com/LeonCheng0129/student_service/internal/domain"
 	"github.com/gin-gonic/gin"
+	"github.com/sirupsen/logrus"
 	"net/http"
 )
 
@@ -39,6 +40,7 @@ func toHTTPStudent(s *domain.Student) Student {
 func (s *Server) GetStudents(c *gin.Context) {
 	students, err := s.getAllStudentHandler.Handle(c.Request.Context())
 	if err != nil {
+		logrus.Errorf("Failed to retrieve students: %v", err)
 		c.JSON(http.StatusInternalServerError, gin.H{"msg": "Failed to retrieve students"})
 		return
 	}
@@ -67,6 +69,7 @@ func (s *Server) PostStudents(c *gin.Context) {
 	}
 	student, err := s.createStudentHandler.Handle(c.Request.Context(), cmd)
 	if err != nil {
+		logrus.Errorf("Failed to create student: %v", err)
 		c.JSON(http.StatusInternalServerError, gin.H{"msg": "Failed to create student"})
 		return
 	}
@@ -80,6 +83,7 @@ func (s *Server) DeleteStudentsId(c *gin.Context, id int) {
 			c.JSON(http.StatusNotFound, gin.H{"msg": "Student not found"})
 			return
 		}
+		logrus.Errorf("Failed to delete student: %v", err)
 		c.JSON(http.StatusInternalServerError, gin.H{"msg": "Failed to delete student"})
 		return
 	}
@@ -94,6 +98,7 @@ func (s *Server) GetStudentsId(c *gin.Context, id int) {
 			c.JSON(http.StatusNotFound, gin.H{"msg": "Student not found"})
 			return
 		}
+		logrus.Errorf("Failed to retrieve student: %v", err)
 		c.JSON(http.StatusInternalServerError, gin.H{"msg": "Failed to retrieve student"})
 		return
 	}
@@ -120,6 +125,7 @@ func (s *Server) PutStudentsId(c *gin.Context, id int) {
 			c.JSON(http.StatusNotFound, gin.H{"msg": "Student not found"})
 			return
 		}
+		logrus.Errorf("Failed to update student: %v", err)
 		c.JSON(http.StatusInternalServerError, gin.H{"msg": "Failed to update student"})
 		return
 	}

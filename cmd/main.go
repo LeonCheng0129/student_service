@@ -17,10 +17,11 @@ func main() {
 	if err != nil {
 		log.Fatalf("Failed to initialize repository: %v\n", err)
 	}
+	cachedRepo := repository.NewCachedRepository(repo)
 
 	// init server server, inject repo into handlers
 	log.Printf("Starting HTTP server...\n")
-	httpServer := server.NewServer(repo)
+	httpServer := server.NewServer(cachedRepo)
 
 	// init gin engine
 	router := gin.Default()
