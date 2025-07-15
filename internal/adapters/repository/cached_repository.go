@@ -163,9 +163,9 @@ func NewCachedRepository(next domain.Repository) *CachedRepository {
 		Addr:            fmt.Sprintf("%s:%s", viper.GetString("redis.ip"), viper.GetString("redis.port")),
 		PoolSize:        viper.GetInt("redis.pool_size"),
 		MaxActiveConns:  viper.GetInt("redis.max_conn"),
-		ConnMaxLifetime: time.Duration(viper.GetInt("redis.conn_timeout")),
-		ReadTimeout:     time.Duration(viper.GetInt("redis.read_timeout")),
-		WriteTimeout:    time.Duration(viper.GetInt("redis.write_timeout")),
+		ConnMaxLifetime: time.Duration(viper.GetInt("redis.conn_timeout")) * time.Millisecond,
+		ReadTimeout:     time.Duration(viper.GetInt("redis.read_timeout")) * time.Millisecond,
+		WriteTimeout:    time.Duration(viper.GetInt("redis.write_timeout")) * time.Millisecond,
 	})
 
 	// test connection

@@ -28,6 +28,8 @@ func newViperConfig() error {
 
 	viper.AddConfigPath("./internal/common/configs")
 
+	_ = viper.BindEnv("mysql.password", "LEON_MYSQL_PASSWORD")
+
 	viper.EnvKeyReplacer(strings.NewReplacer(".", "_")) // 允许用 MYSQL_USER 覆盖 mysql.user
 	viper.AutomaticEnv()
 
