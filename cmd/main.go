@@ -3,6 +3,7 @@ package main
 import (
 	"github.com/LeonCheng0129/student_service/internal/adapters/repository"
 	"github.com/LeonCheng0129/student_service/internal/adapters/server"
+	"github.com/LeonCheng0129/student_service/internal/adapters/server/middleware"
 	_ "github.com/LeonCheng0129/student_service/internal/common/configs"
 	"github.com/gin-contrib/cors"
 	"github.com/gin-gonic/gin"
@@ -27,6 +28,10 @@ func main() {
 
 	// init gin engine
 	router := gin.Default()
+	// applying middlewares, order of applying matters
+	// logging and recovery middlewares are applied first in common
+	log.Println("Applying access_log middlewares...")
+	router.Use(middleware.AccessLog())
 	log.Println("Applying CORS middleware...")
 	router.Use(cors.New(cors.Config{
 		AllowAllOrigins: true,
