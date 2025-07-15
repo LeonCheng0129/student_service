@@ -4,9 +4,11 @@ import (
 	"github.com/LeonCheng0129/student_service/internal/adapters/repository"
 	"github.com/LeonCheng0129/student_service/internal/adapters/server"
 	_ "github.com/LeonCheng0129/student_service/internal/common/configs"
+	"github.com/gin-contrib/cors"
 	"github.com/gin-gonic/gin"
 	"github.com/spf13/viper"
 	"log"
+	"time"
 )
 
 func main() {
@@ -25,6 +27,16 @@ func main() {
 
 	// init gin engine
 	router := gin.Default()
+	log.Println("Applying CORS middleware...")
+	router.Use(cors.New(cors.Config{
+		AllowAllOrigins: true,
+		//AllowOrigins: []string{"http://localhost:3000", "http://127.0.0.1:3000"},
+		AllowMethods:     []string{"GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"},
+		AllowHeaders:     []string{"Origin", "Content-Type", "Authorization"},
+		ExposeHeaders:    []string{"Content-Length"},
+		AllowCredentials: true,
+		MaxAge:           12 * time.Hour,
+	}))
 
 	// register routes
 	log.Printf("Registering routes...\n")
